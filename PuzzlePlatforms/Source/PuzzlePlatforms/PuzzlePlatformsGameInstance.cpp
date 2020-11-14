@@ -5,10 +5,22 @@
 #include "Engine/Engine.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
+#include "UObject/ConstructorHelpers.h"
+#include "PlatformTrigger.h"
+#include "Blueprint/UserWidget.h"
 
 UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer& ObjectInitializer)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Consturctor"));
+	static ConstructorHelpers::FClassFinder<UUserWidget> MenuBPClass(TEXT("/Game/MenuSystem/WBP_MainMenu"));
+
+	if (!MenuBPClass.Class)
+	{
+		return;
+	}
+
+	MenuClass = MenuBPClass.Class;
+	UE_LOG(LogTemp, Warning, TEXT("Found Class %s"), *MenuClass->GetName());
 }
 
 void UPuzzlePlatformsGameInstance::Init()
@@ -26,7 +38,7 @@ void UPuzzlePlatformsGameInstance::Host()
 
 	UWorld* World = GetWorld();
 
-	if (!World) 
+	if (!World)
 	{
 		return;
 	}
@@ -50,4 +62,25 @@ void UPuzzlePlatformsGameInstance::Join(const FString& Address)
 	}
 
 	PlayerController->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
+}
+
+void UPuzzlePlatformsGameInstance::LoadMenu()
+{
+	if (!MenuClass) { return; }
+
+	UUserWidget* Menu = CreateWidget<UUserWidget>(this, MenuClass);
+	if (!Menu) { return; }
+
+	Menu->bIsFocusable = true;
+	Menu->AddToViewport();
+
+	APlayerController* PlayerController = GetFirstLocalPlayerController();
+	if (!PlayerController) { return; }
+	
+	FInputModeUIOnly InputModeData;
+	InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	InputModeData.SetWidgetToFocus(Menu->TakeWidget());
+	PlayerController->SetInputMode(InputModeData);
+
+	PlayerController->bShowMouseCursor = true;
 }
