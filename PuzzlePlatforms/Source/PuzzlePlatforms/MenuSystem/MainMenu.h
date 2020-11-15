@@ -22,6 +22,10 @@ protected:
 public:
 	void SetMenuInterface(IMenuInterface* MenuInterface);
 
+	void SetUp();
+	void TearDown();
+	//virtual void OnLevelRemovedFromWorld(class ULevel* InLevel, UWorld* InWorld);
+
 private:
 	UPROPERTY(meta = (BindWidget))
 		class UButton* HostButton;
