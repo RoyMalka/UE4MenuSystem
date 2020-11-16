@@ -31,11 +31,8 @@ void UPuzzlePlatformsGameInstance::Init()
 
 void UPuzzlePlatformsGameInstance::Host()
 {
-	bool d = Menu != nullptr;
-	UE_LOG(LogTemp, Warning, TEXT("BeforeMenu %d"), d);
 	if (Menu != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AfterMenu"));
 		Menu->TearDown();
 	}
 
@@ -57,6 +54,11 @@ void UPuzzlePlatformsGameInstance::Host()
 
 void UPuzzlePlatformsGameInstance::Join(const FString& Address)
 {
+	if (Menu != nullptr)
+	{
+		Menu->TearDown();
+	}
+
 	UEngine* Engine = GetEngine();
 	if (Engine)
 	{
