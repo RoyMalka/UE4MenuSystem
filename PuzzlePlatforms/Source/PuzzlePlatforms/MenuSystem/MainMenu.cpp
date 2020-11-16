@@ -4,6 +4,7 @@
 #include "MainMenu.h"
 #include "MenuInterface.h"
 #include "Components/Button.h"
+#include "Components/WidgetSwitcher.h"
 
 bool UMainMenu::Initialize()
 {
@@ -11,14 +12,14 @@ bool UMainMenu::Initialize()
 
 	if (!Success) { return false; }
 
-	if (!HostButton || !JoinButton) { return false; }
+	if (!HostButton || !JoinButton || !BackButton) { return false; }
 
-	HostButton->OnClicked.AddDynamic(this, &UMainMenu::OnHostButtonClicked);
-	JoinButton->OnClicked.AddDynamic(this, &UMainMenu::OnJoinButtonClicked);
+	HostButton->OnClicked.AddDynamic(this, &UMainMenu::HostServer);
+	JoinMenuButton->OnClicked.AddDynamic(this, &UMainMenu::OpenJoinMenu);
+	BackButton->OnClicked.AddDynamic(this, &UMainMenu::OpenMainMenu);
 
 	return true;
 }
-
 
 void UMainMenu::SetMenuInterface(IMenuInterface* MenuInterfaceSet)
 {
@@ -61,11 +62,9 @@ void UMainMenu::TearDown()
 	PlayerController->SetInputMode(InputModeData);
 
 	PlayerController->bShowMouseCursor = false;
-
-
 }
 
-void UMainMenu::OnHostButtonClicked()
+void UMainMenu::HostServer()
 {
 	if (MenuInterface)
 	{
@@ -75,8 +74,22 @@ void UMainMenu::OnHostButtonClicked()
 	UE_LOG(LogTemp, Warning, TEXT("Host Button Clicked"));
 }
 
-void UMainMenu::OnJoinButtonClicked()
+void UMainMenu::OpenJoinMenu()
 {
-
 	UE_LOG(LogTemp, Warning, TEXT("Join Button Clicked"));
+	if (!MenuSwitcher || !JoinMenu) { return; }
+
+	MenuSwitcher->SetActiveWidget(JoinMenu);
+
 }
+
+void UMainMenu::OpenMainMenu()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Join Button Clicked"));
+	if (!MenuSwitcher || !MainMenu) { return; }
+
+	MenuSwitcher->SetActiveWidget(MainMenu);
+
+}
+
+
