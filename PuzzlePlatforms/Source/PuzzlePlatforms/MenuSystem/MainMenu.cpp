@@ -23,62 +23,20 @@ bool UMainMenu::Initialize()
 	return true;
 }
 
-void UMainMenu::SetMenuInterface(IMenuInterface* MenuInterfaceSet)
-{
-	MenuInterface = MenuInterfaceSet;
-}
-
-void UMainMenu::SetUp()
-{
-	bIsFocusable = true;
-	AddToViewport();
-
-	UWorld* World = GetWorld();
-	if (!World) { return; }
-
-	APlayerController* PlayerController = World->GetFirstPlayerController();
-	if (!PlayerController) { return; }
-
-	FInputModeUIOnly InputModeData;
-	InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-	InputModeData.SetWidgetToFocus(TakeWidget());
-	PlayerController->SetInputMode(InputModeData);
-
-	PlayerController->bShowMouseCursor = true;
-}
-
-void UMainMenu::TearDown()
-{
-	UE_LOG(LogTemp, Warning, TEXT("SetInput"));
-	bIsFocusable = false;
-	RemoveFromViewport();
-
-	UWorld* World = GetWorld();
-	if (!World) { return; }
-
-	APlayerController* PlayerController = World->GetFirstPlayerController();
-	if (!PlayerController) { return; }
-
-	UE_LOG(LogTemp, Warning, TEXT("SetInput"));
-	FInputModeGameOnly InputModeData;
-	PlayerController->SetInputMode(InputModeData);
-
-	PlayerController->bShowMouseCursor = false;
-}
 
 void UMainMenu::HostServer()
 {
+	UE_LOG(LogTemp, Warning, TEXT("HostServer Button Clicked"));
 	if (MenuInterface)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Not Null"));
 		MenuInterface->Host();
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Host Button Clicked"));
 }
 
 void UMainMenu::JoinServer()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Join Button Clicked"));
 	if (!MenuInterface || !IPAddressField) { return; }
 
 	FString IP = IPAddressField->GetText().ToString();
@@ -88,7 +46,6 @@ void UMainMenu::JoinServer()
 
 void UMainMenu::OpenJoinMenu()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Join Button Clicked"));
 	if (!MenuSwitcher || !JoinMenu) { return; }
 
 	MenuSwitcher->SetActiveWidget(JoinMenu);
@@ -97,7 +54,6 @@ void UMainMenu::OpenJoinMenu()
 
 void UMainMenu::OpenMainMenu()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Join Button Clicked"));
 	if (!MenuSwitcher || !MainMenu) { return; }
 
 	MenuSwitcher->SetActiveWidget(MainMenu);

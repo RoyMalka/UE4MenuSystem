@@ -9,19 +9,21 @@
 #include "PlatformTrigger.h"
 #include "Blueprint/UserWidget.h"
 #include "MenuSystem/MainMenu.h"
+#include "MenuSystem/MenuWidget.h"
 
 UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer& ObjectInitializer)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Consturctor"));
 	static ConstructorHelpers::FClassFinder<UUserWidget> MenuBPClass(TEXT("/Game/MenuSystem/WBP_MainMenu"));
+	static ConstructorHelpers::FClassFinder<UUserWidget> PauseMenuBPClass(TEXT("/Game/MenuSystem/WBP_PauseMenu"));
 
-	if (!MenuBPClass.Class)
+	if (!MenuBPClass.Class || !PauseMenuBPClass.Class)
 	{
 		return;
 	}
 
 	MenuClass = MenuBPClass.Class;
-	UE_LOG(LogTemp, Warning, TEXT("Found Class %s"), *MenuClass->GetName());
+	PauseMenuClass = PauseMenuBPClass.Class;
 }
 
 void UPuzzlePlatformsGameInstance::Init()
@@ -84,4 +86,15 @@ void UPuzzlePlatformsGameInstance::LoadMenu()
 	if (!Menu) { return; }
 	Menu->SetMenuInterface(this);
 	Menu->SetUp();
+}
+
+void UPuzzlePlatformsGameInstance::LoadPauseMenu()
+{
+	if (!PauseMenuClass) { return; }
+
+	UMenuWidget* PauseMenu = CreateWidget<UMenuWidget>(this, PauseMenuClass);
+
+	if (!PauseMenu) { return; }
+	PauseMenu->SetMenuInterface(this);
+	PauseMenu->SetUp();
 }
