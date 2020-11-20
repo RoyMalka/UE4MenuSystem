@@ -12,22 +12,22 @@ bool UPauseMenu::Initialize()
 
 	if (!CancelButton || !QuitButton) { return false; }
 
-	CancelButton->OnClicked.AddDynamic(this, &UPauseMenu::ReturnToGame);
+	CancelButton->OnClicked.AddDynamic(this, &UPauseMenu::TearDown);
 	QuitButton->OnClicked.AddDynamic(this, &UPauseMenu::BackToMainMenu);
 
 	return true;
 }
 
-void UPauseMenu::ReturnToGame()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Cancel Button Clicked"));
-}
+
 
 void UPauseMenu::BackToMainMenu()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Back to main menu Clicked"));
+	if (!MenuInterface)
+	{
+		return;
+	}
+
+	TearDown();
+	MenuInterface->LeaveServer();
 }
 
-void UPauseMenu::Setup()
-{
-}

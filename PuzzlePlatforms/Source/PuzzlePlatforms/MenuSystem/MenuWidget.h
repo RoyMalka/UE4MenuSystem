@@ -8,7 +8,7 @@
 #include "MenuWidget.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class PUZZLEPLATFORMS_API UMenuWidget : public UUserWidget
@@ -19,8 +19,11 @@ public:
 
 	void SetUp();
 
-	void TearDown();
-	
+	UFUNCTION()
+		void TearDown();
+
 protected:
+	virtual bool Initialize() override;
+
 	IMenuInterface* MenuInterface;
 };

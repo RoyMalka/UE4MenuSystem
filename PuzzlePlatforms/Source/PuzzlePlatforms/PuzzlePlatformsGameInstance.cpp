@@ -77,6 +77,18 @@ void UPuzzlePlatformsGameInstance::Join(const FString& Address)
 	PlayerController->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
 }
 
+void UPuzzlePlatformsGameInstance::LeaveServer()
+{
+	APlayerController* PlayerController = GetFirstLocalPlayerController();
+
+	if (!PlayerController)
+	{
+		return;
+	}
+
+	PlayerController->ClientTravel("/Game/MenuSystem/MainMenu", ETravelType::TRAVEL_Absolute);
+}
+
 void UPuzzlePlatformsGameInstance::LoadMenu()
 {
 	if (!MenuClass) { return; }

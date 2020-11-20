@@ -43,3 +43,10 @@ void UMenuWidget::TearDown()
 
 	PlayerController->bShowMouseCursor = false;
 }
+
+bool UMenuWidget::Initialize()
+{
+	bool Success = Super::Initialize();
+
+	return Success;
+}

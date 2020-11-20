@@ -18,9 +18,6 @@ protected:
 	virtual bool Initialize() override;
 
 	UFUNCTION()
-		void ReturnToGame();
-
-	UFUNCTION()
 		void BackToMainMenu();
 
 private:
@@ -29,8 +26,5 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 		class UButton* QuitButton;
-
-	UFUNCTION(BlueprintCallable)
-		void Setup();
 	
 };
