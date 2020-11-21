@@ -5,6 +5,7 @@
 #include "Engine/Engine.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
+#include "OnlineSubsystem.h"
 #include "UObject/ConstructorHelpers.h"
 #include "PlatformTrigger.h"
 #include "Blueprint/UserWidget.h"
@@ -29,6 +30,16 @@ UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitiali
 void UPuzzlePlatformsGameInstance::Init()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Init"));
+
+	IOnlineSubsystem* OnlineSubSystem = IOnlineSubsystem::Get();
+	if (!OnlineSubSystem)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("OnlineSubSystem is null"));
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("OnlineSubSystem: %s"), *OnlineSubSystem->GetSubsystemName().ToString());
+
 }
 
 void UPuzzlePlatformsGameInstance::Host()
@@ -90,7 +101,7 @@ void UPuzzlePlatformsGameInstance::LeaveServer()
 }
 
 
-void UPuzzlePlatformsGameInstance::LoadMenu()
+void UPuzzlePlatformsGameInstance::LoadMenuWidget()
 {
 	if (!MenuClass) { return; }
 

@@ -31,7 +31,7 @@ public:
 
 
 	UFUNCTION(BlueprintCallable)
-		void LoadMenu();
+		void LoadMenuWidget();
 
 	UFUNCTION(BlueprintCallable)
 		void LoadPauseMenu();
