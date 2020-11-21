@@ -6,6 +6,7 @@
 #include "Components/Button.h"
 #include "Components/WidgetSwitcher.h"
 #include "Components/EditableText.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 bool UMainMenu::Initialize()
 {
@@ -19,6 +20,7 @@ bool UMainMenu::Initialize()
 	JoinMenuButton->OnClicked.AddDynamic(this, &UMainMenu::OpenJoinMenu);
 	BackButton->OnClicked.AddDynamic(this, &UMainMenu::OpenMainMenu);
 	JoinButton->OnClicked.AddDynamic(this, &UMainMenu::JoinServer);
+	QuitButton->OnClicked.AddDynamic(this, &UMainMenu::QuitGame);
 
 	return true;
 }
@@ -26,10 +28,8 @@ bool UMainMenu::Initialize()
 
 void UMainMenu::HostServer()
 {
-	UE_LOG(LogTemp, Warning, TEXT("HostServer Button Clicked"));
 	if (MenuInterface)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Not Null"));
 		MenuInterface->Host();
 	}
 
@@ -58,6 +58,18 @@ void UMainMenu::OpenMainMenu()
 
 	MenuSwitcher->SetActiveWidget(MainMenu);
 
+}
+
+void UMainMenu::QuitGame()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Quit Button Clicked"));
+	UWorld* World = GetWorld();
+	if (!World) { return; }
+
+	APlayerController* PlayerController = World->GetFirstPlayerController();
+	if (!PlayerController) { return; }
+
+	PlayerController->ConsoleCommand("quit");
 }
 
 

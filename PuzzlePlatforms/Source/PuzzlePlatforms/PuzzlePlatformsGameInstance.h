@@ -8,13 +8,13 @@
 #include "PuzzlePlatformsGameInstance.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class PUZZLEPLATFORMS_API UPuzzlePlatformsGameInstance : public UGameInstance, public IMenuInterface
 {
 	GENERATED_BODY()
-	
+
 public:
 	UPuzzlePlatformsGameInstance(const FObjectInitializer& ObjectInitializer);
 
@@ -29,13 +29,14 @@ public:
 	UFUNCTION(Exec)
 		void LeaveServer() override;
 
+
 	UFUNCTION(BlueprintCallable)
-		void LoadMenu();	
+		void LoadMenu();
 
 	UFUNCTION(BlueprintCallable)
 		void LoadPauseMenu();
 
-private: 
+private:
 	TSubclassOf<class UUserWidget> MenuClass;
 	TSubclassOf<class UUserWidget> PauseMenuClass;
 

@@ -89,6 +89,7 @@ void UPuzzlePlatformsGameInstance::LeaveServer()
 	PlayerController->ClientTravel("/Game/MenuSystem/MainMenu", ETravelType::TRAVEL_Absolute);
 }
 
+
 void UPuzzlePlatformsGameInstance::LoadMenu()
 {
 	if (!MenuClass) { return; }

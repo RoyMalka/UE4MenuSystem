@@ -2,6 +2,12 @@
 
 
 #include "MenuWidget.h"
+bool UMenuWidget::Initialize()
+{
+	bool Success = Super::Initialize();
+
+	return Success;
+}
 
 void UMenuWidget::SetMenuInterface(IMenuInterface* MenuInterfaceSet)
 {
@@ -44,9 +50,4 @@ void UMenuWidget::TearDown()
 	PlayerController->bShowMouseCursor = false;
 }
 
-bool UMenuWidget::Initialize()
-{
-	bool Success = Super::Initialize();
 
-	return Success;
-}
