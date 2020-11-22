@@ -5,12 +5,15 @@
 #include "Engine/Engine.h"
 #include "GameFramework/PlayerController.h"
 #include "Kismet/GameplayStatics.h"
-#include "OnlineSubsystem.h"
+#include "OnlineSessionSettings.h"
+#include "Interfaces/OnlineSessionInterface.h"
 #include "UObject/ConstructorHelpers.h"
 #include "PlatformTrigger.h"
 #include "Blueprint/UserWidget.h"
 #include "MenuSystem/MainMenu.h"
 #include "MenuSystem/MenuWidget.h"
+
+const static FName SESSION_NAME = TEXT("My Session Game");
 
 UPuzzlePlatformsGameInstance::UPuzzlePlatformsGameInstance(const FObjectInitializer& ObjectInitializer)
 {
@@ -34,16 +37,44 @@ void UPuzzlePlatformsGameInstance::Init()
 	IOnlineSubsystem* OnlineSubSystem = IOnlineSubsystem::Get();
 	if (!OnlineSubSystem)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("OnlineSubSystem is null"));
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("OnlineSubSystem: %s"), *OnlineSubSystem->GetSubsystemName().ToString());
+	SessionInterface = OnlineSubSystem->GetSessionInterface();
 
+	if (SessionInterface.IsValid())
+	{
+		SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UPuzzlePlatformsGameInstance::OnCreateSessionComplete);
+		SessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &UPuzzlePlatformsGameInstance::OnDestorySessionComplete);
+	}
 }
 
 void UPuzzlePlatformsGameInstance::Host()
 {
+	if (SessionInterface.IsValid())
+	{
+		auto ExistingSession = SessionInterface->GetNamedSession(SESSION_NAME);
+		if (ExistingSession)
+		{		
+			SessionInterface->DestroySession(SESSION_NAME);
+		}
+		else
+		{
+			CreateSession(SESSION_NAME);
+		}
+	}
+}
+
+void UPuzzlePlatformsGameInstance::OnCreateSessionComplete(FName ServerName, bool Succeeded)
+{
+	if (!Succeeded)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to create a session"));
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Created A Session %s"), *ServerName.ToString());
+
 	if (Menu != nullptr)
 	{
 		Menu->TearDown();
@@ -63,6 +94,26 @@ void UPuzzlePlatformsGameInstance::Host()
 	}
 
 	World->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
+}
+
+void UPuzzlePlatformsGameInstance::OnDestorySessionComplete(FName ServerName, bool Succeeded)
+{
+	if (!Succeeded)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to destory session: %s"), *ServerName.ToString());
+		return;
+	}
+
+	CreateSession(SESSION_NAME);
+}
+
+void UPuzzlePlatformsGameInstance::CreateSession(FName ServerName)
+{
+	if (SessionInterface.IsValid())
+	{
+		FOnlineSessionSettings SessionSettings;
+		SessionInterface->CreateSession(0, ServerName, SessionSettings);
+	}	
 }
 
 void UPuzzlePlatformsGameInstance::Join(const FString& Address)
@@ -122,3 +173,5 @@ void UPuzzlePlatformsGameInstance::LoadPauseMenu()
 	PauseMenu->SetMenuInterface(this);
 	PauseMenu->SetUp();
 }
+
+
