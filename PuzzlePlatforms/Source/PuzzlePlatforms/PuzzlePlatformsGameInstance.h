@@ -30,6 +30,7 @@ public:
 	UFUNCTION(Exec)
 		void LeaveServer() override;
 
+	void RefreshServerList() override;
 
 	UFUNCTION(BlueprintCallable)
 		void LoadMenuWidget();
