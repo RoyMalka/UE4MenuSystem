@@ -50,12 +50,10 @@ void UMainMenu::HostServer()
 
 void UMainMenu::JoinServer()
 {
+	if (!MenuInterface || !SelectedIndex.IsSet()) { return; }
 
-	if (!MenuInterface) { return; }
-
-	//FString IP = IPAddressField->GetText().ToString();
-	MenuInterface->Join("");
-
+	MenuInterface->Join(SelectedIndex.GetValue());
+	
 }
 
 void UMainMenu::SetServerList(TArray<FString> ServerNames)
@@ -63,12 +61,17 @@ void UMainMenu::SetServerList(TArray<FString> ServerNames)
 	if (ServerRowClass)
 	{
 		ServersList->ClearChildren();
+		uint32 index = 0;
 		for (FString& ServerName : ServerNames)
 		{
 			auto ServerRow = CreateWidget<UServerRow>(GetWorld(), ServerRowClass);
 			ServerRow->SetServerName(FText::FromString(ServerName));
+			ServerRow->SetServerIndex(index, ServerNames.Num());
+			ServerRow->SetUp(this, index);
 			ServersList->AddChild(ServerRow);
-		}	
+
+			++index;
+		}
 	}
 }
 
@@ -100,6 +103,11 @@ void UMainMenu::QuitGame()
 	if (!PlayerController) { return; }
 
 	PlayerController->ConsoleCommand("quit");
+}
+
+void UMainMenu::SelectIndex(uint32 Index)
+{
+	SelectedIndex = Index;
 }
 
 
