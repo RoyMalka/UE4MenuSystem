@@ -38,6 +38,7 @@ void UPuzzlePlatformsGameInstance::Init()
 	{
 		return;
 	}
+	UE_LOG(LogTemp, Warning, TEXT("Found a sub system: %s"), *OnlineSubSystem->GetSubsystemName().ToString());
 
 	SessionInterface = OnlineSubSystem->GetSessionInterface();
 
@@ -114,9 +115,11 @@ void UPuzzlePlatformsGameInstance::CreateSession(FName ServerName)
 	if (SessionInterface.IsValid())
 	{
 		FOnlineSessionSettings SessionSettings;
-		SessionSettings.bIsLANMatch = true;
+		SessionSettings.bIsLANMatch = false;
 		SessionSettings.NumPublicConnections = 2;
 		SessionSettings.bShouldAdvertise = true;
+		SessionSettings.bUsesPresence = true;
+
 		SessionInterface->CreateSession(0, ServerName, SessionSettings);
 	}
 }
@@ -138,6 +141,8 @@ void UPuzzlePlatformsGameInstance::OnFindSessionsComplete(bool Succeeded)
 		}
 
 		Menu->SetServerList(ServerNames);
+
+		UE_LOG(LogTemp, Warning, TEXT("Finish finding sessions"));
 	}
 	else
 	{
@@ -170,7 +175,7 @@ void UPuzzlePlatformsGameInstance::OnJoinSessionComplete(FName SessionName, EOnJ
 			UE_LOG(LogTemp, Warning, TEXT("Could not get a connect string"));
 			return;
 		}
-		
+
 		PlayerController->ClientTravel(Address, ETravelType::TRAVEL_Absolute);
 	}
 	else
@@ -192,8 +197,8 @@ void UPuzzlePlatformsGameInstance::RefreshServerList()
 	SessionSearch = MakeShareable(new FOnlineSessionSearch());
 	if (SessionSearch.IsValid())
 	{
-		SessionSearch->bIsLanQuery = true;
-		//SessionSearch->QuerySettings.
+		SessionSearch->MaxSearchResults = 1000;
+		SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
 		UE_LOG(LogTemp, Warning, TEXT("Starting to find session"));
 		SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
 	}
