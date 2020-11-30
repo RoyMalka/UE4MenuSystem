@@ -53,7 +53,7 @@ void UMainMenu::JoinServer()
 	if (!MenuInterface || !SelectedIndex.IsSet()) { return; }
 
 	MenuInterface->Join(SelectedIndex.GetValue());
-	
+
 }
 
 void UMainMenu::SetServerList(TArray<FString> ServerNames)
@@ -108,6 +108,20 @@ void UMainMenu::QuitGame()
 void UMainMenu::SelectIndex(uint32 Index)
 {
 	SelectedIndex = Index;
+	UpdateChildren();
+}
+
+void UMainMenu::UpdateChildren()
+{
+	TArray<UWidget*> ChildrenList = ServersList->GetAllChildren();
+	for (int32 i = 0 ; i < ServersList->GetChildrenCount(); ++i)
+	{
+		UServerRow* ServerRow = Cast<UServerRow>(ServersList->GetChildAt(i));
+		if (ServerRow)
+		{
+			ServerRow->Selected = (SelectedIndex.IsSet() && SelectedIndex.GetValue() == i);
+		}		
+	}
 }
 
 

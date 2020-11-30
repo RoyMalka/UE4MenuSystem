@@ -22,6 +22,9 @@ public:
 
 	void SetUp(class UMainMenu* Parent, uint32 Index);
 
+	UPROPERTY(BlueprintReadOnly)
+		bool Selected = false;
+
 protected:
 	virtual bool Initialize() override;
 
