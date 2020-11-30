@@ -56,17 +56,18 @@ void UMainMenu::JoinServer()
 
 }
 
-void UMainMenu::SetServerList(TArray<FString> ServerNames)
+void UMainMenu::SetServerList(TArray<FServerData> ServersData)
 {
 	if (ServerRowClass)
 	{
 		ServersList->ClearChildren();
 		uint32 index = 0;
-		for (FString& ServerName : ServerNames)
+		for (FServerData& ServerData : ServersData)
 		{
 			auto ServerRow = CreateWidget<UServerRow>(GetWorld(), ServerRowClass);
-			ServerRow->SetServerName(FText::FromString(ServerName));
-			ServerRow->SetServerIndex(index, ServerNames.Num());
+			ServerRow->SetServerName(FText::FromString(ServerData.Name));
+			ServerRow->SetConnectionFraction(ServerData.CurrentPlayers, ServerData.MaxPlayers);
+			ServerRow->SetHostUserName(FText::FromString(ServerData.HostUsername));
 			ServerRow->SetUp(this, index);
 			ServersList->AddChild(ServerRow);
 

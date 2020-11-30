@@ -17,8 +17,9 @@ class PUZZLEPLATFORMS_API UServerRow : public UUserWidget
 public:
 
 	void SetServerName(const FText& ServerName);
+	void SetHostUserName(const FText& HostUser);
 
-	void SetServerIndex(uint32 ServerIndex, uint32 TotalNumberOfServers);
+	void SetConnectionFraction(uint32 CurrentNumOfPlayers, uint32 TotalNumberOfPlayers);
 
 	void SetUp(class UMainMenu* Parent, uint32 Index);
 
@@ -34,7 +35,10 @@ private:
 		class UTextBlock* ServerNameText;
 
 	UPROPERTY(meta = (BindWidget))
-		class UTextBlock* ServerIndexText;
+		class UTextBlock* ConnectionFraction;
+
+	UPROPERTY(meta = (BindWidget))
+		class UTextBlock* HostUserName;
 
 	UPROPERTY(meta = (BindWidget))
 		class UButton* ServerRowButton;

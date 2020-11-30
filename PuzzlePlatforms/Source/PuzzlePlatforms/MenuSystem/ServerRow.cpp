@@ -22,6 +22,11 @@ void UServerRow::SetServerName(const FText& ServerName)
 	ServerNameText->SetText(ServerName);
 }
 
+void UServerRow::SetHostUserName(const FText& HostUser)
+{
+	HostUserName->SetText(HostUser);
+}
+
 void UServerRow::SetSelectedIndex()
 {
 	if (MainMenu)
@@ -30,11 +35,10 @@ void UServerRow::SetSelectedIndex()
 	}
 }
 
-void UServerRow::SetServerIndex(uint32 ServerIndex, uint32 TotalNumberOfServers)
+void UServerRow::SetConnectionFraction(uint32 CurrentNumOfPlayers, uint32 TotalNumberOfPlayers)
 {
-	uint32 VisibaleIndex = ServerIndex + 1;
-	FString Text = FString::Printf(TEXT("%d/%d"), VisibaleIndex, TotalNumberOfServers);
-	ServerIndexText->SetText(FText::FromString(Text));
+	FString Text = FString::Printf(TEXT("%d/%d"), CurrentNumOfPlayers, TotalNumberOfPlayers);
+	ConnectionFraction->SetText(FText::FromString(Text));
 }
 
 void UServerRow::SetUp(UMainMenu* Parent, uint32 Index)

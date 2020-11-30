@@ -115,7 +115,8 @@ void UPuzzlePlatformsGameInstance::CreateSession(FName ServerName)
 	if (SessionInterface.IsValid())
 	{
 		FOnlineSessionSettings SessionSettings;
-		SessionSettings.bIsLANMatch = false;
+	
+		SessionSettings.bIsLANMatch = IOnlineSubsystem::Get()->GetSubsystemName() == "NULL";
 		SessionSettings.NumPublicConnections = 2;
 		SessionSettings.bShouldAdvertise = true;
 		SessionSettings.bUsesPresence = true;
@@ -128,22 +129,22 @@ void UPuzzlePlatformsGameInstance::OnFindSessionsComplete(bool Succeeded)
 {
 	if (Succeeded && SessionSearch.IsValid() && Menu)
 	{
-		TArray<FString> ServerNames;
-		ServerNames.Add("Test Server 1");
-		ServerNames.Add("Test Server 2");
-		ServerNames.Add("Test Server 3");
+		TArray<FServerData> ServersData;
 		TArray<FOnlineSessionSearchResult> SearchResults = SessionSearch->SearchResults;
 
 		for (FOnlineSessionSearchResult& Result : SearchResults)
 		{
-			FString ServerName = Result.GetSessionIdStr();
+			FServerData ServerData;
+			ServerData.Name = Result.GetSessionIdStr();
+			ServerData.MaxPlayers = Result.Session.SessionSettings.NumPublicConnections;
+			ServerData.CurrentPlayers = ServerData.MaxPlayers - Result.Session.NumOpenPublicConnections;
+			ServerData.HostUsername = Result.Session.OwningUserName;
+			ServersData.Add(ServerData);
 
-			UE_LOG(LogTemp, Warning, TEXT("Found a Session: %s"), *ServerName);
-
-			ServerNames.Add(ServerName);
+			UE_LOG(LogTemp, Warning, TEXT("Found a Session: %s"), *ServerData.Name);
 		}
-
-		Menu->SetServerList(ServerNames);
+		
+		Menu->SetServerList(ServersData);
 
 		UE_LOG(LogTemp, Warning, TEXT("Finish finding sessions"));
 	}
@@ -200,6 +201,7 @@ void UPuzzlePlatformsGameInstance::RefreshServerList()
 	SessionSearch = MakeShareable(new FOnlineSessionSearch());
 	if (SessionSearch.IsValid())
 	{
+		SessionSearch->bIsLanQuery = IOnlineSubsystem::Get()->GetSubsystemName() == "NULL";
 		SessionSearch->MaxSearchResults = 1000;
 		SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
 		UE_LOG(LogTemp, Warning, TEXT("Starting to find session"));
