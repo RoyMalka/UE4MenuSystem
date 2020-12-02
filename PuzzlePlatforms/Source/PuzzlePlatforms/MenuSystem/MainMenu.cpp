@@ -27,13 +27,16 @@ bool UMainMenu::Initialize()
 
 	if (!Success) { return false; }
 
-	if (!HostButton || !JoinButton || !BackButton) { return false; }
+	if (!HostButton || !JoinButton || !BackButton || !JoinMenuButton || 
+		!QuitButton || !HostServerButton || !CancelHostMenuButton) { return false; }
 
-	HostButton->OnClicked.AddDynamic(this, &UMainMenu::HostServer);
+	HostButton->OnClicked.AddDynamic(this, &UMainMenu::OpenHostMenu);
 	JoinMenuButton->OnClicked.AddDynamic(this, &UMainMenu::OpenJoinMenu);
 	BackButton->OnClicked.AddDynamic(this, &UMainMenu::OpenMainMenu);
 	JoinButton->OnClicked.AddDynamic(this, &UMainMenu::JoinServer);
 	QuitButton->OnClicked.AddDynamic(this, &UMainMenu::QuitGame);
+	HostServerButton->OnClicked.AddDynamic(this, &UMainMenu::HostServer);
+	CancelHostMenuButton->OnClicked.AddDynamic(this, &UMainMenu::OpenMainMenu);
 
 	return true;
 }
@@ -43,9 +46,16 @@ void UMainMenu::HostServer()
 {
 	if (MenuInterface)
 	{
-		MenuInterface->Host();
+		FText ServerName = ServerHostName->GetText();
+		MenuInterface->Host(ServerName.ToString());
 	}
 
+}
+
+void UMainMenu::OpenHostMenu()
+{
+	if (!MenuSwitcher || !HostMenu) { return; }
+	MenuSwitcher->SetActiveWidget(HostMenu);
 }
 
 void UMainMenu::JoinServer()
@@ -115,13 +125,13 @@ void UMainMenu::SelectIndex(uint32 Index)
 void UMainMenu::UpdateChildren()
 {
 	TArray<UWidget*> ChildrenList = ServersList->GetAllChildren();
-	for (int32 i = 0 ; i < ServersList->GetChildrenCount(); ++i)
+	for (int32 i = 0; i < ServersList->GetChildrenCount(); ++i)
 	{
 		UServerRow* ServerRow = Cast<UServerRow>(ServersList->GetChildAt(i));
 		if (ServerRow)
 		{
 			ServerRow->Selected = (SelectedIndex.IsSet() && SelectedIndex.GetValue() == i);
-		}		
+		}
 	}
 }
 
