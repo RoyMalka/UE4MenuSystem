@@ -98,7 +98,7 @@ void UPuzzlePlatformsGameInstance::OnCreateSessionComplete(FName ServerName, boo
 		return;
 	}
 
-	World->ServerTravel("/Game/ThirdPersonCPP/Maps/ThirdPersonExampleMap?listen");
+	World->ServerTravel("/Game/Blueprints/Maps/Lobby?listen");
 }
 
 void UPuzzlePlatformsGameInstance::OnDestorySessionComplete(FName ServerName, bool Succeeded)
