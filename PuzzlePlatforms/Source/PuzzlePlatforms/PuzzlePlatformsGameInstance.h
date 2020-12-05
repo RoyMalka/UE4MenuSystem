@@ -39,6 +39,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 		void LoadPauseMenu();
 
+	UFUNCTION()
+		void StartSession();
+
 private:
 	TSubclassOf<class UUserWidget> MenuClass;
 	TSubclassOf<class UUserWidget> PauseMenuClass;
